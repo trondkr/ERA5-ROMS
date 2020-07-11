@@ -18,13 +18,11 @@ class ECMWF_tools:
 
 	def create_requests(self):
 		years = [self.config_ecmwf.start_year + y for y in range(1)]
-		months = [m + 1 for m in range(2)]
 
 		for parameter in self.config_ecmwf.parameters:
-
 			metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 
-			out_filename = "{}_{}_{}-to-{}.nc".format(self.config_ecmwf.dataset, metadata['name'], years[0], years[-1])
+			out_filename = "{}_{}_{}-to-{}.nc".format(self.config_ecmwf.dataset, parameter, years[0], years[-1])
 			if os.path.exists(out_filename):
 				os.remove(out_filename)
 
