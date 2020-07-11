@@ -5,6 +5,8 @@ import pprint
 class ECMWF_query:
 
 	def __init__(self):
+
+		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
 		self.use_era5 = True
 
 		self.start_year = 2002
@@ -25,6 +27,7 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.area = "80/0/50/25"  # North/West/South/East
+		self.area = "90/-180/44/180"
 		self.parameters = ['Specific_humidity',
 						   '10m_u_component_of_wind',
 						   '10m_v_component_of_wind',
