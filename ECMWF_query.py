@@ -13,6 +13,7 @@ class ECMWF_query:
 		self.end_year = 2003
 		self.resultsdir = "results"
 		self.debug = False
+		self.time_units = "days since 1948-01-01 00:00:00"
 
 		if not os.path.exists(self.resultsdir):
 			os.mkdir(self.resultsdir)
@@ -20,14 +21,14 @@ class ECMWF_query:
 			self.dataset = 'era5'
 			self.dataset_class = 'ea'
 			self.grid = '0.25/0.25'
-			self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
 		else:
 			self.dataset = 'interim'
 			self.dataset_class = 'ei'
 			self.grid = '0.75/0.75'
 
-		self.area = "80/0/50/25"  # North/West/South/East
-		self.area = "90/-180/44/180"
+		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
+		self.area = "70/0/55/22"  # North/West/South/East
+		#self.area = "90/-180/44/180"
 		self.parameters = ['Specific_humidity',
 						   '10m_u_component_of_wind',
 						   '10m_v_component_of_wind',
@@ -42,8 +43,6 @@ class ECMWF_query:
 						   'Mean_surface_latent_heat_flux',
 						   'Mean_surface_sensible_heat_flux',
 						   'Evaporation']
-
-		print("Setup of ECMWF config class finished")
 
 	def info(self):
 		pprint("ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \

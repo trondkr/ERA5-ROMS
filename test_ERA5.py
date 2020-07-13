@@ -19,32 +19,32 @@ class TestInit(TestECMWF_init):
 		self.assertIsNotNone(self.tool.config_ecmwf)
 		self.assertIsNotNone(self.tool)
 
+	def test_server_not_null(self):
+		self.assertTrue(self.tool.server)
 
-def test_server_not_null(self):
-	self.assertFalse(self.tool.server)
+	def test_initial_config_not_null(self):
+		self.assertIsNotNone(self.tool.config_ecmwf)
+
+	def test_initial_config_not_null(self):
+		self.assertIsNotNone(self.tool.config_ecmwf.time_units)
+
+	def test_ecmwf_class_correct(self):
+		self.assertTrue(self.tool.config_ecmwf.dataset_class in ["ei","ea"])
+
+	def test_reference_date_equal_to_ROMS_standard(self):
+		self.assertTrue(self.tool.config_ecmwf.time_units=="days since 1948-01-01 00:00:00")
+
+	def test_initial_start_and_end_dates(self):
+		self.assertIsNotNone(self.tool.config_ecmwf.start_year)
+		self.assertIsNotNone(self.tool.config_ecmwf.end_year)
+
+	def test_inital_start_and_end_dates_correct_format(self):
+		self.assertTrue(datetime.strptime(str(self.tool.config_ecmwf.start_year), '%Y'))
+		self.assertTrue(datetime.strptime(str(self.tool.config_ecmwf.end_year), '%Y'))
 
 
-def test_initial_config_not_null(self):
-	self.assertIsNotNone(self.cmip6.config)
-
-
-def test_initial_start_and_end_dates(self):
-	self.assertIsNotNone(self.cmip6.config.start_date)
-	self.assertIsNotNone(self.cmip6.config.end_date)
-
-
-def test_inital_start_and_end_dates_correct_format(self):
-	start_date = datetime.strptime(self.cmip6.config.start_date, '%Y-%m-%d')
-	end_date = datetime.strptime(self.cmip6.config.end_date, '%Y-%m-%d')
-	self.assertIsInstance(start_date, datetime,
-						  "Make sure that start and end date in `CMIP6_config` is of correct format `YYYY-mm-dd`")
-	self.assertIsInstance(end_date, datetime,
-						  "Make sure that start and end date in `CMIP6_config` is of correct format `YYYY-mm-dd`")
-
-
-def test_initial_variable_and_table_ids_equal_length(self):
-	self.assertTrue(len(self.cmip6.config.table_ids) == len(self.cmip6.config.variable_ids),
-					"Make sure that you initialize CMIP6_config using equal length of variable ids and table ids")
+	def test_initial_variable_and_table_ids_equal_length(self):
+		self.assertTrue(self.tool.config_ecmwf.reanalysis)
 
 
 if __name__ == "__main__":

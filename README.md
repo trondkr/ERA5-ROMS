@@ -30,6 +30,8 @@ Edit the file `ECMWF_query.py`to define the start and end period you want to dow
 
 The region for where you extract the data is defined by the variable `self.area = "80/0/50/25"`found in `ECMWF_query.py`. The area is constrained by `North/West/South/East`.
 
+The time units in teh  resulting ROMS files are converted from the ERA5 units (`1900-01-01`) to the standard ROMS reference time `1948-01-01`.
+The toolbox uses the netCDF4 `date2num`and `num2date` functions for this conversion.
 **Run the toobox**
 To run the toolbox after editing the settings simply run
 `python ECMWF_tools.py`

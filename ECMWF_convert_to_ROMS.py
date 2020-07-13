@@ -3,7 +3,7 @@ import netCDF4
 import numpy as np
 import ECMWF_plot
 import os
-
+from netCDF4 import date2num, num2date
 import ECMWF_query
 
 
@@ -56,8 +56,6 @@ class ECMWF_convert_to_ROMS:
 
 		longitude = dset.variables['longitude'][:]
 		latitude = dset.variables['latitude'][:]
-		time = dset.variables['time'][:]
-		dset.close()
 
 		do_plot = False
 		if do_plot:
@@ -68,13 +66,23 @@ class ECMWF_convert_to_ROMS:
 											units,
 											out_filename,
 											parameter,
-											longitude,
-											latitude,
-											time)
+											dset)
+		dset.close()
+	# We change the reference date to be equal to the standard ROMS
+	# reference time 1948-01-01 so that we can use ocean_time as time name
+	def change_reference_date(self, ds, config_ecmwf:ECMWF_query):
+		era5_time = ds.variables['time'][:]
+		era5_time_units = ds.variables['time'].units
+		era5_time_cal = ds.variables['time'].calendar
 
-	def write_to_ROMS_netcdf_file(self, config_ecmwf: ECMWF_query, data_array, units, netcdf_file, \
-								  parameter, longitude, latitude,
-								  time):
+		dates = num2date(era5_time, units=era5_time_units, calendar=era5_time_cal)
+
+		times = netCDF4.date2num(dates, units=config_ecmwf.time_units)
+		return times, config_ecmwf.time_units
+
+	def write_to_ROMS_netcdf_file(self, config_ecmwf: ECMWF_query, data_array, \
+								  var_units: str, netcdf_file, \
+								  parameter: str, ds):
 		"""
 		:param config_ecmwf: The config object containing the metadata
 		:param data_array:  the data array downloaded from ECMWF and converted to correct ROMS units
@@ -89,15 +97,20 @@ class ECMWF_convert_to_ROMS:
 		"""
 		metadata = config_ecmwf.get_parameter_metadata(parameter)
 
+		longitude = ds.variables['longitude'][:]
+		latitude = ds.variables['latitude'][:]
+		time, time_units = self.change_reference_date(ds, config_ecmwf)
+		print(time, time_units)
+
 		netcdf_roms_filename = config_ecmwf.resultsdir+'/'+netcdf_file[0:-3] + '_roms.nc'
 		if os.path.exists(netcdf_roms_filename): os.remove(netcdf_roms_filename)
 		print("Writing final product to file {}".format(netcdf_roms_filename))
 
 		f1 = netCDF4.Dataset(netcdf_roms_filename, 'w')
 		f1.title = "{} ECMWF model forcing for parameter {}".format(config_ecmwf.dataset.upper(), parameter)
-		f1.description = "Created by Trond Kristiansen (at) niva.no \n" \
-						 "Atmospheric data on original grid but converted to ROMS units and parameter names. \n" \
-						 "Files created using the ECMWF_tools toolbox: \n" \
+		f1.description = "Created by Trond Kristiansen (at) niva.no." \
+						 "Atmospheric data on original grid but converted to ROMS units and parameter names." \
+						 "Files created using the ECMWF_tools toolbox:" \
 						 "https://github.com/trondkr/ERA5-ROMS"
 		f1.history = "Created {}".format(datetime.now())
 		f1.link = "https://github.com/trondkr/"
@@ -123,8 +136,8 @@ class ECMWF_convert_to_ROMS:
 		vnc[:] = latitude
 
 		vnc = f1.createVariable('ocean_time', 'd', ('ocean_time',), fill_value=fillval)
-		vnc.long_name = 'hours since 1900-01-01 00:00:00.0'
-		vnc.units = 'hours since 1900-01-01 00:00:00.0'
+		vnc.long_name = time_units
+		vnc.units = time_units
 		vnc.field = 'time, scalar, series'
 		vnc.calendar = 'standard'
 		vnc[:] = time
@@ -133,7 +146,7 @@ class ECMWF_convert_to_ROMS:
 		vnc.long_name = 'Latitude'
 		vnc.units = 'degree_north'
 		vnc.standard_name = 'latitude'
-		vnc.units = units
+		vnc.units = var_units
 		vnc.missing_value = fillval
 		vnc[:, :, :] = data_array
 		print("Finished writing to file {}".format(netcdf_roms_filename))
