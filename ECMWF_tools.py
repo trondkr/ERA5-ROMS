@@ -19,24 +19,25 @@ class ECMWF_tools:
 	def create_requests(self):
 		years = [self.config_ecmwf.start_year + y for y in range(1)]
 
-		for parameter in self.config_ecmwf.parameters:
-			metadata = self.config_ecmwf.get_parameter_metadata(parameter)
+		for year in years:
+			print("=> Downloading for year {}".format(year))
 
-			out_filename = "{}_{}_{}-to-{}.nc".format(self.config_ecmwf.dataset, parameter, years[0], years[-1])
-			if os.path.exists(out_filename):
-				os.remove(out_filename)
+			for parameter in self.config_ecmwf.parameters:
+				metadata = self.config_ecmwf.get_parameter_metadata(parameter)
+				print("=> getting data for : {} ".format(metadata['name']))
 
-			print("=> Downloading data: {} from ECMWF for {} to {}".format(metadata['name'], years[0], years[-1]))
+				out_filename = "{}_{}_year_{}.nc".format(self.config_ecmwf.dataset, parameter, year)
+				if os.path.exists(out_filename):
+					os.remove(out_filename)
 
-			self.submit_request(parameter, years, out_filename)
+				self.submit_request(parameter, year, out_filename)
 
-	def submit_request(self, parameter, years, out_filename):
+	def submit_request(self, parameter, year, out_filename):
 		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 		if parameter == "Specific_humidity":
 			self.config_ecmwf.reanalysis = "reanalysis-era5-pressure-levels"
 			levtype = 'pl'
 			pressure_level = '1000'
-			print("parameter {}".format(parameter))
 		else:
 			self.config_ecmwf.reanalysis = 'reanalysis-era5-single-levels'
 			levtype = 'sfc'
@@ -45,7 +46,7 @@ class ECMWF_tools:
 			self.server.retrieve(self.config_ecmwf.reanalysis, {
 				"dataset": self.config_ecmwf.dataset,
 				"class": self.config_ecmwf.dataset_class,
-				"year": years,
+				"year": year,
 				"month": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 				"day": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
 						"12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22",

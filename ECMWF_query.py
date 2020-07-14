@@ -9,8 +9,8 @@ class ECMWF_query:
 		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
 		self.use_era5 = True
 
-		self.start_year = 2002
-		self.end_year = 2003
+		self.start_year = 1980
+		self.end_year =2019
 		self.resultsdir = "results"
 		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
@@ -27,8 +27,8 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
-		self.area = "70/0/55/22"  # North/West/South/East
-		#self.area = "90/-180/44/180"
+		#self.area = "70/0/55/22"  # North/West/South/East
+		self.area = "90/-180/44/180"
 		self.parameters = ['Specific_humidity',
 						   '10m_u_component_of_wind',
 						   '10m_v_component_of_wind',
