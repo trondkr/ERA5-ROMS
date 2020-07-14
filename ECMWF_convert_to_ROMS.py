@@ -123,6 +123,14 @@ class ECMWF_convert_to_ROMS:
 		f1.createDimension('lat', len(latitude))
 		f1.createDimension('ocean_time', None)
 
+		float
+		my_var(time, lat, lon);
+		my_var: long_name = "my variable long name";
+		my_var: units = "my variable units";
+		my_var: coordinates = "lon lat";
+		my_var: time = "my_var_time";
+
+
 		vnc = f1.createVariable('lon', 'd', 'lon', fill_value=fillval)
 		vnc.long_name = 'Longitude'
 		vnc.units = 'degree_east'
@@ -146,6 +154,7 @@ class ECMWF_convert_to_ROMS:
 		vnc.long_name = 'Latitude'
 		vnc.units = 'degree_north'
 		vnc.standard_name = 'latitude'
+		vnc.coordinates = 'lon lat'
 		vnc.units = var_units
 		vnc.missing_value = fillval
 		vnc[:, :, :] = data_array
