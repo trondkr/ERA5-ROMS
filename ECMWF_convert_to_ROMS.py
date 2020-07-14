@@ -68,6 +68,7 @@ class ECMWF_convert_to_ROMS:
 											parameter,
 											dset)
 		dset.close()
+
 	# We change the reference date to be equal to the standard ROMS
 	# reference time 1948-01-01 so that we can use ocean_time as time name
 	def change_reference_date(self, ds, config_ecmwf:ECMWF_query):
@@ -122,14 +123,6 @@ class ECMWF_convert_to_ROMS:
 		f1.createDimension('lon', len(longitude))
 		f1.createDimension('lat', len(latitude))
 		f1.createDimension('ocean_time', None)
-
-		float
-		my_var(time, lat, lon);
-		my_var: long_name = "my variable long name";
-		my_var: units = "my variable units";
-		my_var: coordinates = "lon lat";
-		my_var: time = "my_var_time";
-
 
 		vnc = f1.createVariable('lon', 'd', 'lon', fill_value=fillval)
 		vnc.long_name = 'Longitude'
