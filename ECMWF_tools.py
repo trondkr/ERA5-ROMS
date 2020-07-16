@@ -17,7 +17,7 @@ class ECMWF_tools:
 		self.server = cdsapi.Client(debug=self.config_ecmwf.debug)
 
 	def create_requests(self):
-		years = [self.config_ecmwf.start_year + y for y in range(1)]
+		years = [self.config_ecmwf.start_year + y for y in range(self.config_ecmwf.end_year)]
 
 		for year in years:
 			print("=> Downloading for year {}".format(year))

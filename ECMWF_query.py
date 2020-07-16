@@ -9,7 +9,7 @@ class ECMWF_query:
 		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
 		self.use_era5 = True
 
-		self.start_year = 1980
+		self.start_year = 1981
 		self.end_year =2019
 		self.resultsdir = "results"
 		self.debug = False

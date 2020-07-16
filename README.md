@@ -1,3 +1,7 @@
+[![Build status][image-1]][1]
+![CodeBeat][image-2]
+![CodeCov][image-3]
+
 # Download ERA5 and convert to ROMS format
 
 This toolbox enables you to download ERA5 atmospheric forcing data for your model domain for a specified period.  The toolbox uses the [*Climate Data Store*] Python API to connect and download specific variables required by ROMS to perform simulations with atmospheric forcing. These variables are included in the list below:
@@ -38,3 +42,8 @@ To run the toolbox after editing the settings simply run
 
 **Unittest**
 A few simple unittests are included in `test_ERA5.py`.
+
+[1]: https://buildkite.com/rask-dev-llc/era5-toolbox
+[image-1]:	https://badge.buildkite.com/9fe63ac4afc901fb503d10d67c26175d7071137729c00d1b17.svg
+[image-2]:	https://codebeat.co/badges/402a5755-c757-4a8d-a9a5-f9349aed8462
+[image-3]:	https://codecov.io/gh/trondkr/ERA5-ROMS/branch/master/graph/badge.svg
