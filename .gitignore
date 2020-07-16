@@ -16,3 +16,5 @@ Data/*
 *.nc
 coverage.xml*
 .idea/*
+Results/*
+results/*
