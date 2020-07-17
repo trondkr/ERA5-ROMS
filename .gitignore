@@ -1,6 +1,5 @@
 *.xcuserstate
 *DS_Store*
-*.idea
 *.DS_Store
 *atlassian*
 Pods/*
@@ -15,6 +14,5 @@ __pycache__/*
 Data/*
 *.nc
 coverage.xml*
-.idea/*
 Results/*
 results/*
