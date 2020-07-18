@@ -2,6 +2,7 @@
 *DS_Store*
 *.DS_Store
 *atlassian*
+*.idea/*
 Pods/*
 *.yml~
 *.png

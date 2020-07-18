@@ -19,7 +19,8 @@ class ECMWF_tools:
 	def create_requests(self):
 		years = [self.config_ecmwf.start_year + y for y in range(self.config_ecmwf.end_year)]
 		months=[i for i in range(1,13,1)]
-
+		if not os.path.exists(self.resultsdir):
+			os.mkdir(self.resultsdir)
 		for year in years:
 			for month in months:
 				print("=> Downloading for year {} month {}".format(year, month))
@@ -28,7 +29,7 @@ class ECMWF_tools:
 					metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 					print("=> getting data for : {} ".format(metadata['name']))
 
-					out_filename = "{}_{}_yyyymm_{}{}.nc".format(self.config_ecmwf.dataset, parameter, year, month)
+					out_filename = "{}_{}_yyyymm_{}{}.nc".format(self.config_ecmwf.dataset, parameter, year, str(month).zfill(2))
 					if os.path.exists(out_filename):
 						os.remove(out_filename)
 
