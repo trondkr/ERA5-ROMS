@@ -19,8 +19,8 @@ class ECMWF_tools:
 	def create_requests(self):
 		years = [self.config_ecmwf.start_year + y for y in range(self.config_ecmwf.end_year)]
 		months=[i for i in range(1,13,1)]
-		if not os.path.exists(self.resultsdir):
-			os.mkdir(self.resultsdir)
+		if not os.path.exists(self.config_ecmwf.resultsdir):
+			os.mkdir(self.config_ecmwf.resultsdir)
 		for year in years:
 			for month in months:
 				print("=> Downloading for year {} month {}".format(year, month))
