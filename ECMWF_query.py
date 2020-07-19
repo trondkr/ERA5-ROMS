@@ -7,7 +7,7 @@ class ECMWF_query:
 	def __init__(self):
 
 		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
-		self.use_era5 = False
+		self.use_era5 = True
 
 		self.start_year = 1980
 		self.end_year =2019

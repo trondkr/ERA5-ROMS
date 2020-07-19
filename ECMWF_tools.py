@@ -65,7 +65,7 @@ class ECMWF_tools:
 					'28', '29', '30',
 					'31',
 				],
-			#	"levtype": levtype,
+				"levtype": levtype,
 		#		"pressure_level": pressure_level,
 			#	"stream": "oper",
 				'time': [
