@@ -101,7 +101,6 @@ class ECMWF_convert_to_ROMS:
 		longitude = ds.variables['longitude'][:]
 		latitude = ds.variables['latitude'][:]
 		time, time_units = self.change_reference_date(ds, config_ecmwf)
-		print(time, time_units)
 
 		netcdf_roms_filename = config_ecmwf.resultsdir+'/'+netcdf_file[0:-3] + '_roms.nc'
 		if os.path.exists(netcdf_roms_filename): os.remove(netcdf_roms_filename)
