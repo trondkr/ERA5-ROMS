@@ -47,9 +47,7 @@ class ECMWF_tools:
 			pressure_level = None
 		try:
 			self.server.retrieve(self.config_ecmwf.reanalysis, {
-				"dataset": self.config_ecmwf.dataset,
 				'product_type': 'reanalysis',
-				"class": self.config_ecmwf.dataset_class,
 				"year": year,
 				"month": [month], #["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 				'day': [
@@ -67,7 +65,6 @@ class ECMWF_tools:
 				],
 				"levtype": levtype,
 		#		"pressure_level": pressure_level,
-			#	"stream": "oper",
 				'time': [
 					'00:00', '01:00', '02:00',
 					'03:00', '04:00', '05:00',
@@ -78,7 +75,7 @@ class ECMWF_tools:
 					'18:00', '19:00', '20:00',
 					'21:00', '22:00', '23:00',
 				],
-				"variable": ['167.128','166.128','165.128','151.128','164.128','228.128','37.235','38.235','36.235','34.235','33.235','182.128'], # [metadata['parameter_id']],
+				"variable": ['167.128','166.128','165.128','151.128','164.128','228.128','37.235','38.235','36.235','34.235','33.235','182.128'],
 				'format': "netcdf",
 				"area": self.config_ecmwf.area,
 				"verbose": self.config_ecmwf.debug,
@@ -88,8 +85,8 @@ class ECMWF_tools:
 			print(e)
 			print("[!] -------------------------- PROBLEMS WITH {0}".format(out_filename))
 
-		converter = ECMWF_convert_to_ROMS.ECMWF_convert_to_ROMS()
-		converter.convert_to_ROMS_standards(out_filename, metadata, parameter, self.config_ecmwf)
+		#converter = ECMWF_convert_to_ROMS.ECMWF_convert_to_ROMS()
+		#converter.convert_to_ROMS_standards(out_filename, metadata, parameter, self.config_ecmwf)
 
 
 if __name__ == '__main__':
