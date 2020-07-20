@@ -78,7 +78,7 @@ class ECMWF_tools:
 					'18:00', '19:00', '20:00',
 					'21:00', '22:00', '23:00',
 				],
-				"variable": [metadata['parameter_id']],
+				"variable": ['167.128','166.128','165.128','151.128','164.128','228.128','37.235','38.235','36.235','34.235','33.235','182.128'], # [metadata['parameter_id']],
 				'format': "netcdf",
 				"area": self.config_ecmwf.area,
 			}, out_filename)
