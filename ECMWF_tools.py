@@ -25,15 +25,15 @@ class ECMWF_tools:
 			for month in months:
 				print("=> Downloading for year {} month {}".format(year, month))
 
-				for parameter in self.config_ecmwf.parameters:
-					metadata = self.config_ecmwf.get_parameter_metadata(parameter)
-					print("=> getting data for : {} ".format(metadata['name']))
+			#	for parameter in self.config_ecmwf.parameters:
+		#		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
+	#			print("=> getting data for : {} ".format(metadata['name']))
 
-					out_filename = "{}_{}_yyyymm_{}{}.nc".format(self.config_ecmwf.dataset, parameter, year, str(month).zfill(2))
-					if os.path.exists(out_filename):
-						os.remove(out_filename)
+				out_filename = "{}_{}_yyyymm_{}{}.nc".format(self.config_ecmwf.dataset, "all", year, str(month).zfill(2))
+				if os.path.exists(out_filename):
+					os.remove(out_filename)
 
-					self.submit_request(parameter, year, month, out_filename)
+				self.submit_request( "all", year, month, out_filename)
 
 	def submit_request(self, parameter, year, month, out_filename):
 		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
