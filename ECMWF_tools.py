@@ -36,7 +36,7 @@ class ECMWF_tools:
 				self.submit_request( "all", year, month, out_filename)
 
 	def submit_request(self, parameter, year, month, out_filename):
-		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
+		#metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 		if parameter == "Specific_humidity":
 			self.config_ecmwf.reanalysis = "reanalysis-era5-pressure-levels"
 			levtype = 'pl'
@@ -81,6 +81,7 @@ class ECMWF_tools:
 				"variable": ['167.128','166.128','165.128','151.128','164.128','228.128','37.235','38.235','36.235','34.235','33.235','182.128'], # [metadata['parameter_id']],
 				'format': "netcdf",
 				"area": self.config_ecmwf.area,
+				"verbose": self.config_ecmwf.debug,
 			}, out_filename)
 
 		except Exception as e:
