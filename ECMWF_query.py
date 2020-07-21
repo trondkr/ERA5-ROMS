@@ -11,7 +11,7 @@ class ECMWF_query:
 
 		self.start_year = 1980
 		self.end_year =2019
-		self.resultsdir = "results"
+		self.resultsdir = "results/"
 		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
 
