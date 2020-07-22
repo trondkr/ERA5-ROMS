@@ -24,10 +24,11 @@ class ECMWF_tools:
 
 			for parameter in self.config_ecmwf.parameters:
 				print("=> getting data for : {} ".format(parameter))
+				metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 
 				out_filename = "{}{}_{}_year_{}.nc".format(self.config_ecmwf.resultsdir,
 															   self.config_ecmwf.dataset,
-															   "all",
+															   metadata["short_name"],
 															   year)
 				if os.path.exists(out_filename):
 					os.remove(out_filename)
