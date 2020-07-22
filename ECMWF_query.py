@@ -8,8 +8,8 @@ class ECMWF_query:
 
 		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
 		self.use_era5 = True
-		self.start_year = 1980
-		self.end_year = 2019
+		self.start_year = 1990
+		self.end_year = 2000
 		self.resultsdir = "results/"
 		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
@@ -41,14 +41,6 @@ class ECMWF_query:
 						   'total_cloud_cover',
 						   'total_precipitation',
 						   'specific_humidity']
-
-		self.parameters = ['mean_surface_net_long_wave_radiation_flux',
-						   'mean_surface_net_short_wave_radiation_flux',
-						   'mean_surface_sensible_heat_flux',
-						   'total_cloud_cover',
-						   'total_precipitation',
-						   'specific_humidity']
-
 	def info(self):
 		pprint("ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \
 		Period: 1979 - present \n \
