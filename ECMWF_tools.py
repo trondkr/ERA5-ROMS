@@ -85,7 +85,7 @@ class ECMWF_tools:
 
 		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 		converter = ECMWF_convert_to_ROMS.ECMWF_convert_to_ROMS()
- 		converter.convert_to_ROMS_standards(out_filename, metadata, parameter, self.config_ecmwf)
+		converter.convert_to_ROMS_standards(out_filename, metadata, parameter, self.config_ecmwf)
 
 
 if __name__ == '__main__':
