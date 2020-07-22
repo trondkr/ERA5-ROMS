@@ -23,8 +23,7 @@ class ECMWF_tools:
 			print("=> Downloading for year {}".format(year))
 
 			for parameter in self.config_ecmwf.parameters:
-				metadata = self.config_ecmwf.get_parameter_metadata(parameter)
-					print("=> getting data for : {} ".format(metadata['name']))
+				print("=> getting data for : {} ".format(parameter))
 
 				out_filename = "{}{}_{}_year_{}.nc".format(self.config_ecmwf.resultsdir,
 															   self.config_ecmwf.dataset,
@@ -33,7 +32,7 @@ class ECMWF_tools:
 				if os.path.exists(out_filename):
 					os.remove(out_filename)
 
-				self.submit_request("all", year, out_filename)
+				self.submit_request(parameter, year, out_filename)
 
 	def submit_request(self, parameter, year, out_filename):
 
