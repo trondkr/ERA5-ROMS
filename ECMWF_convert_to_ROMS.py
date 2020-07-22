@@ -1,9 +1,9 @@
+import os
 from datetime import datetime
 import netCDF4
 import numpy as np
+from netCDF4 import num2date
 import ECMWF_plot
-import os
-from netCDF4 import date2num, num2date
 import ECMWF_query
 
 
@@ -12,21 +12,21 @@ class ECMWF_convert_to_ROMS:
 	def __init__(self):
 		self.plotter = ECMWF_plot.ECMWF_plot()
 
-	def convert_to_ROMS_standards(self, out_filename: str, metadata, parameter: str, config_ecmwf:ECMWF_query):
+	def convert_to_ROMS_standards(self, out_filename: str, metadata, parameter: str, config_ecmwf: ECMWF_query):
 		dset = netCDF4.Dataset(out_filename, 'r+')
 
 		da = dset.variables[metadata['short_name']][:]
 		masked_array = np.ma.masked_where(da == dset.variables[metadata['short_name']].missing_value, da)
 
-		if parameter in ['Mean_surface_net_short-wave_radiation_flux',
-						   'Mean_surface_net_long-wave_radiation_flux',
-						   'Mean_surface_downward_long-wave_radiation_flux',
-						   'Mean_surface_latent_heat_flux',
-						   'Mean_surface_sensible_heat_flux']:
-			#masked_array = np.ma.divide(masked_array, (3600. * 3.0))
+		if parameter in ['mean_surface_net_short_wave_radiation_flux',
+						 'mean_surface_net_long_wave_radiation_flux',
+						 'mean_surface_downward_long_wave_radiation_flux',
+						 'mean_surface_latent_heat_flux',
+						 'mean_surface_sensible_heat_flux']:
+			# masked_array = np.ma.divide(masked_array, (3600. * 3.0))
 			units = 'W m**-2'
 
-		if parameter in ['Specific_humidity']:
+		if parameter in ['specific_humidity']:
 			units = 'kg kg-1'
 
 		if parameter in ['10m_u_component_of_wind', '10m_v_component_of_wind']:
@@ -36,42 +36,42 @@ class ECMWF_convert_to_ROMS:
 			masked_array = np.ma.subtract(masked_array, 273.15)
 			units = 'Celsius'
 
-		if parameter in ['Evaporation']:
+		if parameter in ['evaporation']:
 			Rho_w = 1000  # kg m - 3
 			masked_array = np.ma.multiply(masked_array, (Rho_w / (3 * 3600.)))
 			units = 'kg m-2 s-1'
 
-		if parameter in ['Mean_sea_level_pressure']:
-		#	masked_array = np.ma.divide(masked_array, 100)
+		if parameter in ['mean_sea_level_pressure']:
+			#	masked_array = np.ma.divide(masked_array, 100)
 			units = 'Pa'
 
-		if parameter in ['Total_cloud_cover']:
+		if parameter in ['total_cloud_cover']:
 			dset.renameVariable(metadata['short_name'], 'cloud')
 			units = 'nondimensional'
 
-		if parameter in ['Total_precipitation']:
+		if parameter in ['total_precipitation']:
 			Rho_w = 1000  # kg m - 3
 			masked_array = np.ma.multiply(masked_array, (Rho_w / (3 * 3600.)))
 			units = 'kg m-2 s-1'
 
-		longitude = dset.variables['longitude'][:]
-		latitude = dset.variables['latitude'][:]
+		# longitude = dset.variables['longitude'][:]
+		# latitude = dset.variables['latitude'][:]
 
-		do_plot = False
-		if do_plot:
-			self.plotter.plot_data(longitude, latitude, masked_array, time, parameter)
+		# do_plot = False
+		# if do_plot:
+		#		self.plotter.plot_data(longitude, latitude, masked_array, time, parameter)
 
 		self.write_to_ROMS_netcdf_file(config_ecmwf,
-											masked_array,
-											units,
-											out_filename,
-											parameter,
-											dset)
+									   masked_array,
+									   units,
+									   out_filename,
+									   parameter,
+									   dset)
 		dset.close()
 
 	# We change the reference date to be equal to the standard ROMS
 	# reference time 1948-01-01 so that we can use ocean_time as time name
-	def change_reference_date(self, ds, config_ecmwf:ECMWF_query):
+	def change_reference_date(self, ds, config_ecmwf: ECMWF_query):
 		era5_time = ds.variables['time'][:]
 		era5_time_units = ds.variables['time'].units
 		era5_time_cal = ds.variables['time'].calendar
@@ -102,7 +102,7 @@ class ECMWF_convert_to_ROMS:
 		latitude = ds.variables['latitude'][:]
 		time, time_units = self.change_reference_date(ds, config_ecmwf)
 
-		netcdf_roms_filename = config_ecmwf.resultsdir+'/'+netcdf_file[0:-3] + '_roms.nc'
+		netcdf_roms_filename = config_ecmwf.resultsdir + '/' + netcdf_file[0:-3] + '_roms.nc'
 		if os.path.exists(netcdf_roms_filename): os.remove(netcdf_roms_filename)
 		print("Writing final product to file {}".format(netcdf_roms_filename))
 
