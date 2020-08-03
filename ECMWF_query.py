@@ -8,8 +8,8 @@ class ECMWF_query:
 
 		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
 		self.use_era5 = True
-		self.start_year = 1987
-		self.end_year = 1990
+		self.start_year = 1992
+		self.end_year = 1999
 		self.resultsdir = "results/"
 		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
