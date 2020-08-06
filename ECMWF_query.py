@@ -42,10 +42,19 @@ class ECMWF_query:
 						   'total_precipitation',
 						   'specific_humidity']
 
-		self.parameters = ['mean_surface_sensible_heat_flux',
+		self.parameters = ['10m_u_component_of_wind',
+						   '10m_v_component_of_wind',
+						   '2m_temperature',
+						   'mean_sea_level_pressure',
+						   'mean_surface_downward_long_wave_radiation_flux',
+						   'mean_surface_latent_heat_flux',
+						   'mean_surface_net_long_wave_radiation_flux',
+						   'mean_surface_net_short_wave_radiation_flux',
 						   'total_cloud_cover',
 						   'total_precipitation',
 						   'specific_humidity']
+
+
 
 	def info(self):
 		pprint("ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \
