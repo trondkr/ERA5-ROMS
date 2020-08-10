@@ -18,3 +18,5 @@ Data/*
 coverage.xml*
 Results/*
 results/*
+coverage.xml
+.coverage*
