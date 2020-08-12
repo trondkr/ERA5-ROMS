@@ -22,7 +22,8 @@ class ECMWF_convert_to_ROMS:
 						 'mean_surface_net_long_wave_radiation_flux',
 						 'mean_surface_downward_long_wave_radiation_flux',
 						 'mean_surface_latent_heat_flux',
-						 'mean_surface_sensible_heat_flux']:
+						 'mean_surface_sensible_heat_flux',
+						 'mean_surface_downward_short_wave_radiation_flux']:
 			# masked_array = np.ma.divide(masked_array, (3600. * 3.0))
 			units = 'W m**-2'
 

@@ -33,7 +33,7 @@ To start signup and get necessary credentials at the [*Climate Data Store*]. Sto
 
 url: https://cds.climate.copernicus.eu/api/v2
 key: 28122:f85a4564-8895-498d-ad8a-gf274ba38d2r
-
+ls -lrt
 #### *Edit the toolbox settings*
 Edit the file `ECMWF_query.py`to define the start and end period you want to download data. If you want you can edit the months, days, and time steps of the day data will be downloaded in the file `ECMWF_tools.py` but by default the program downloads data for all available reanalysis time steps of the day for all days for all months of the year. Each result file contains data for one variable for one year.
 
@@ -43,6 +43,8 @@ regular Rutgers ROMS version uses 'mean_surface_net_short_wave_radiation_flux'.
 
 The request API can be tested here:
 [ECMWF ERA5 API requests](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=form)
+and the Python cdsapi is described [cdsapi](https://github.com/ecmwf/cdsapi).
+Data availability from Copernicus available here [https://cp-availability.ceda.ac.uk/](https://cp-availability.ceda.ac.uk/).
 
 The region for where you extract the data is defined by the variable `self.area = "80/0/50/25"`found in `ECMWF_query.py`. The area is constrained by `North/West/South/East`.
 
