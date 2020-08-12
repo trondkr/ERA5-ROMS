@@ -23,7 +23,8 @@ This toolbox enables you to download ERA5 atmospheric forcing data for your mode
    'Mean_surface_downward_long-wave_radiation_flux',
    'Mean_surface_latent_heat_flux',
    'Mean_surface_sensible_heat_flux',
-   'Evaporation'
+   'Evaporation',
+   'Mean surface downward short-wave radiation flux'
 ```
 
 To see the details for how ROMS requires naming convention etc. you can see more details [here].
@@ -36,9 +37,16 @@ key: 28122:f85a4564-8895-498d-ad8a-gf274ba38d2r
 #### *Edit the toolbox settings*
 Edit the file `ECMWF_query.py`to define the start and end period you want to download data. If you want you can edit the months, days, and time steps of the day data will be downloaded in the file `ECMWF_tools.py` but by default the program downloads data for all available reanalysis time steps of the day for all days for all months of the year. Each result file contains data for one variable for one year.
 
+
+**Note**: If you are using Kate Hedstroms ROMS version with sea-ice you need to download 'mean_surface_downward_short_wave_radiation_flux' while the
+regular Rutgers ROMS version uses 'mean_surface_net_short_wave_radiation_flux'.
+
+The request API can be tested here:
+[ECMWF ERA5 API requests](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=form)
+
 The region for where you extract the data is defined by the variable `self.area = "80/0/50/25"`found in `ECMWF_query.py`. The area is constrained by `North/West/South/East`.
 
-The time units in teh  resulting ROMS files are converted from the ERA5 units (`1900-01-01`) to the standard ROMS reference time `1948-01-01`.
+The time units in the  resulting ROMS files are converted from the ERA5 units (`1900-01-01`) to the standard ROMS reference time `1948-01-01`.
 The toolbox uses the netCDF4 `date2num`and `num2date` functions for this conversion.
 
 #### *Main query*

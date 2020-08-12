@@ -49,12 +49,12 @@ class ECMWF_query:
 						   'mean_surface_downward_long_wave_radiation_flux',
 						   'mean_surface_latent_heat_flux',
 						   'mean_surface_net_long_wave_radiation_flux',
-						   'mean_surface_net_short_wave_radiation_flux',
+						   'mean_surface_downward_short_wave_radiation_flux',
 						   'total_cloud_cover',
 						   'total_precipitation',
 						   'specific_humidity']
 
-
+		self.parameters = ['mean_surface_downward_short_wave_radiation_flux']
 
 	def info(self):
 		pprint("ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \
@@ -136,4 +136,9 @@ class ECMWF_query:
 								'short_name': 'e',
 								'roms_name': 'evaporation',
 								'name': 'Evaporation',
-								'units': 'm of water equivalent'}}[parameter]
+								'units': 'm of water equivalent'},
+				'mean_surface_downward_short_wave_radiation_flux': {'parameter_id': 'None',
+																	'short_name': 'msdswrf',
+																	'roms_name': 'swrad',
+																	'name': 'Mean surface downward short-wave radiation flux',
+																	'units': 'W m-2'}}[parameter]
