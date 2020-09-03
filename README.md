@@ -26,8 +26,8 @@ This toolbox enables you to download ERA5 atmospheric forcing data for your mode
    'Evaporation',
    'Mean surface downward short-wave radiation flux'
 ```
-
-To see the details for how ROMS requires naming convention etc. you can see more details [here].
+Details of the ERA5 variables can be found [here](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview)
+To see the details for how ROMS requires naming convention etc.
 #### *Install API*
 To start signup and get necessary credentials at the [*Climate Data Store*]. Store the credentials in a file called `.cdsapirc`in you root `$HOME` directory. It should look something like this:
 
@@ -110,9 +110,22 @@ The main query for the call for data is found in ECMWF_tools.py
 
 ```
 
-####*Run the toobox*
+####*Run the toolbox*
 To run the toolbox after editing the settings simply run
 `python ECMWF_tools.py`
+
+### Global data
+If your model domain covers the entire Arctic, or northern hemisphere and reaches from -180 to 180 you have to convert
+the ERA5 data to be connected. This is done by introducing a fake point at 180 which is identical to point 0. This
+makes the data across the meridian line con`sistent and ROMS won`t choke on it. This step requires CDO installed.
+
+Run `make_files_fully_global-sh`:
+```Bash
+for filename in results/*.nc; do
+		echo "Converting: " "$filename" " to" "halo/$(basename "$filename" .nc)_halo.nc"
+    cdo sethalo,0,1 "$filename" "halo/$(basename "$filename" .nc)_halo.nc"
+done
+```
 
 ####*Unittest*
 A few simple unittests are included in `test_ERA5.py`.

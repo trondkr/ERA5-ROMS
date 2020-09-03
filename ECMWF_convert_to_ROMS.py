@@ -73,13 +73,15 @@ class ECMWF_convert_to_ROMS:
 	# We change the reference date to be equal to the standard ROMS
 	# reference time 1948-01-01 so that we can use ocean_time as time name
 	def change_reference_date(self, ds, config_ecmwf: ECMWF_query):
+
 		era5_time = ds.variables['time'][:]
 		era5_time_units = ds.variables['time'].units
 		era5_time_cal = ds.variables['time'].calendar
 
 		dates = num2date(era5_time, units=era5_time_units, calendar=era5_time_cal)
-
-		times = netCDF4.date2num(dates, units=config_ecmwf.time_units)
+		# Convert back to julian day and convert toi seconds since 1948-01-01 as that is standard for ROMS
+		days_to_seconds = 86400.0
+		times = netCDF4.date2num(dates, units=config_ecmwf.time_units) *  days_to_seconds
 		return times, config_ecmwf.time_units
 
 	def write_to_ROMS_netcdf_file(self, config_ecmwf: ECMWF_query, data_array, \
@@ -144,10 +146,9 @@ class ECMWF_convert_to_ROMS:
 		vnc[:] = time
 
 		vnc = f1.createVariable(metadata['roms_name'], 'd', ('ocean_time', 'lat', 'lon'), fill_value=fillval)
-		vnc.long_name = 'Latitude'
-		vnc.units = 'degree_north'
-		vnc.standard_name = 'latitude'
-		vnc.coordinates = 'lon lat'
+		vnc.long_name = metadata["name"]
+		vnc.standard_name = metadata["short_name"]
+		vnc.coordinates = "lon lat"
 		vnc.units = var_units
 		vnc.missing_value = fillval
 		vnc[:, :, :] = data_array
