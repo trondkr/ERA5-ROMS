@@ -7,5 +7,5 @@
 
 for filename in halo/*.nc; do
   	echo "Converting: " "$filename" " to" "halo_secs/$(basename "$filename")"
-		ncatted -a long_name,ocean_time,o,c,"seconds since 148-01-01" $filename
+		ncatted -a long_name,ocean_time,o,c,"seconds since 1948-01-01" $filename
 done

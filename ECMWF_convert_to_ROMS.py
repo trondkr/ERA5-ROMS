@@ -79,10 +79,10 @@ class ECMWF_convert_to_ROMS:
 		era5_time_cal = ds.variables['time'].calendar
 
 		dates = num2date(era5_time, units=era5_time_units, calendar=era5_time_cal)
-		# Convert back to julian day and convert toi seconds since 1948-01-01 as that is standard for ROMS
-		days_to_seconds = 86400.0
-		times = netCDF4.date2num(dates, units=config_ecmwf.time_units) *  days_to_seconds
-		return times, config_ecmwf.time_units
+		# Convert back to julian day and convert to days since 1948-01-01 as that is standard for ROMS
+		#days_to_seconds = 86400.0
+		times = netCDF4.date2num(dates, units=config_ecmwf.time_units) # * days_to_seconds
+		return times, config_ecmwf.time_units, era5_time_cal
 
 	def write_to_ROMS_netcdf_file(self, config_ecmwf: ECMWF_query, data_array, \
 								  var_units: str, netcdf_file, \
@@ -103,7 +103,7 @@ class ECMWF_convert_to_ROMS:
 
 		longitude = ds.variables['longitude'][:]
 		latitude = ds.variables['latitude'][:]
-		time, time_units = self.change_reference_date(ds, config_ecmwf)
+		time, time_units, time_calendar = self.change_reference_date(ds, config_ecmwf)
 
 		netcdf_roms_filename = netcdf_file[0:-3] + '_roms.nc'
 		if os.path.exists(netcdf_roms_filename): os.remove(netcdf_roms_filename)
@@ -138,17 +138,17 @@ class ECMWF_convert_to_ROMS:
 		vnc.standard_name = 'latitude'
 		vnc[:] = latitude
 
-		vnc = f1.createVariable('ocean_time', 'd', ('ocean_time',), fill_value=fillval)
-		vnc.long_name = time_units
+		vnc = f1.createVariable(metadata['time_name'], 'd', (metadata['time_name'],), fill_value=fillval)
+		vnc.long_name = 'time'
 		vnc.units = time_units
 		vnc.field = 'time, scalar, series'
-		vnc.calendar = 'standard'
+		vnc.calendar = time_calendar
 		vnc[:] = time
 
-		vnc = f1.createVariable(metadata['roms_name'], 'd', ('ocean_time', 'lat', 'lon'), fill_value=fillval)
+		vnc = f1.createVariable(metadata['roms_name'], 'd', (metadata['time_name'], 'lat', 'lon'), fill_value=fillval)
 		vnc.long_name = metadata["name"]
 		vnc.standard_name = metadata["short_name"]
-		vnc.coordinates = "lon lat"
+		vnc.coordinates = "lon lat {}".format(metadata['time_name'])
 		vnc.units = var_units
 		vnc.missing_value = fillval
 		vnc[:, :, :] = data_array
