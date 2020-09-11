@@ -39,7 +39,7 @@ class ECMWF_convert_to_ROMS:
 
 		if parameter in ['evaporation']:
 			Rho_w = 1000  # kg m - 3
-			masked_array = np.ma.multiply(masked_array, (Rho_w / (3 * 3600.)))
+			masked_array = np.ma.multiply(masked_array, (Rho_w / (1 * 3600.)))
 			units = 'kg m-2 s-1'
 
 		if parameter in ['mean_sea_level_pressure']:
@@ -51,8 +51,9 @@ class ECMWF_convert_to_ROMS:
 			units = 'nondimensional'
 
 		if parameter in ['total_precipitation']:
+			# Convert meter (m) to rate (kgm-2s-1)
 			Rho_w = 1000  # kg m - 3
-			masked_array = np.ma.multiply(masked_array, (Rho_w / (3 * 3600.)))
+			masked_array = np.ma.multiply(masked_array, (Rho_w / (1 * 3600.)))
 			units = 'kg m-2 s-1'
 
 		# longitude = dset.variables['longitude'][:]
@@ -80,8 +81,8 @@ class ECMWF_convert_to_ROMS:
 
 		dates = num2date(era5_time, units=era5_time_units, calendar=era5_time_cal)
 		# Convert back to julian day and convert to days since 1948-01-01 as that is standard for ROMS
-		#days_to_seconds = 86400.0
-		times = netCDF4.date2num(dates, units=config_ecmwf.time_units) # * days_to_seconds
+		# days_to_seconds = 86400.0
+		times = netCDF4.date2num(dates, units=config_ecmwf.time_units)  # * days_to_seconds
 		return times, config_ecmwf.time_units, era5_time_cal
 
 	def write_to_ROMS_netcdf_file(self, config_ecmwf: ECMWF_query, data_array, \
