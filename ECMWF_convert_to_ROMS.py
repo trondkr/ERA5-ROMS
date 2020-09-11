@@ -125,7 +125,7 @@ class ECMWF_convert_to_ROMS:
 		# Define dimensions
 		f1.createDimension('lon', len(longitude))
 		f1.createDimension('lat', len(latitude))
-		f1.createDimension('ocean_time', None)
+		f1.createDimension(metadata['time_name'], None)
 
 		vnc = f1.createVariable('lon', 'd', 'lon', fill_value=fillval)
 		vnc.long_name = 'Longitude'
