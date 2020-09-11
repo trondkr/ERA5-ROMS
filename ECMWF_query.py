@@ -60,13 +60,13 @@ class ECMWF_query:
 
 	def get_parameter_metadata(self, parameter):
 		return {'2m_temperature': {'parameter_id': '167.128',
-								   'short_name': '2t',
+								   'short_name': 't2m',
 								   'roms_name': 'Tair',
 								   'name': '2 metre temperature',
 								   'units': 'K',
 								   'time_name': 'Tair_time'},
 				'2m_dewpoint_temperature': {'parameter_id': '168.128',
-											'short_name': '2d',
+											'short_name': 'd2m',
 											'roms_name': 'Qair',
 											'name': '2 metre dewpoint temperature',
 											'units': 'K',

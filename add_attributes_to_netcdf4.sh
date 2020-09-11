@@ -2,7 +2,7 @@
 # Add attribute "coordinates":"lon lat" to all ERA5 data
 
 declare -a array_var_name=("evaporation" "lwrad_down" "Pair" "lwrad" "latent" "sensible" "Tair" "Uwind" "Vwind" "cloud" "rain" "Qair")
-declare -a array_era_name=("e" "msdwlwrf" "msl" "msnlwrf" "mslhf" "msshf" "t2m" "u10" "v10" "tcc" "tp" "q")
+declare -a array_era_name=("e" "msdwlwrf" "msl" "msnlwrf" "mslhf" "msshf" "t2" "u10" "v10" "tcc" "tp" "q")
 arraylength=${#array_var_name[@]}
 
 for (( i=0; i<${arraylength}; i++ ));do
