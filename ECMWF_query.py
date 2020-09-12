@@ -27,8 +27,8 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
-		self.area = "60/0/59/1"  # North/West/South/East
-		# self.area = "90/-180/44/180"
+		#self.area = "60/0/59/1"  # test setup North/West/South/East
+		self.area = "90/-180/44/180"
 
 		self.parameters = ['10m_u_component_of_wind',
 						   '10m_v_component_of_wind',
