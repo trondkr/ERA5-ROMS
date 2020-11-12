@@ -39,7 +39,7 @@ Edit the file `ECMWF_query.py`to define the start and end period you want to dow
 
 
 **Note**: If you are using Kate Hedstroms ROMS version with sea-ice you need to download 'mean_surface_downward_short_wave_radiation_flux' while the
-regular Rutgers ROMS version uses 'mean_surface_net_short_wave_radiation_flux'.
+regular Rutgers ROMS version uses 'mean_surface_net_short_wave_radiation_flux'. This can be defined in the option `self.ROMS_version = "Kate"`in `ECMWF_query.py`.
 
 The request API can be tested here:
 [ECMWF ERA5 API requests](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=form)
@@ -110,7 +110,7 @@ The main query for the call for data is found in ECMWF_tools.py
 
 ```
 
-####*Run the toolbox*
+#### *Run the toolbox*
 To run the toolbox after editing the settings simply run
 `python ECMWF_tools.py`
 
