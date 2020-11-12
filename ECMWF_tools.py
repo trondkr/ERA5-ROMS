@@ -14,7 +14,7 @@ class ECMWF_tools:
 		self.server = cdsapi.Client(debug=self.config_ecmwf.debug)
 
 	def create_requests(self):
-		years = [self.config_ecmwf.start_year + y for y in range(self.config_ecmwf.end_year)]
+		years = [self.config_ecmwf.start_year + y for y in range(self.config_ecmwf.end_year-self.config_ecmwf.start_year)]
 
 		if not os.path.exists(self.config_ecmwf.resultsdir):
 			os.mkdir(self.config_ecmwf.resultsdir)
@@ -87,7 +87,7 @@ class ECMWF_tools:
 		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 
 		converter = ECMWF_convert_to_ROMS.ECMWF_convert_to_ROMS()
-		converter.convert_to_ROMS_standards(out_filename, metadata, parameter, self.config_ecmwf)
+		converter.convert_to_ROMS_units_standards(out_filename, metadata, parameter, self.config_ecmwf)
 
 
 if __name__ == '__main__':

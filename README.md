@@ -105,7 +105,7 @@ The main query for the call for data is found in ECMWF_tools.py
 
 		metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 		converter = ECMWF_convert_to_ROMS.ECMWF_convert_to_ROMS()
-		converter.convert_to_ROMS_standards(out_filename, metadata, parameter, self.config_ecmwf)
+		converter.convert_to_ROMS_units_standards(out_filename, metadata, parameter, self.config_ecmwf)
 
 
 ```

@@ -1,10 +1,12 @@
 import os
-import pprint
+import logging
 
 
 class ECMWF_query:
 
 	def __init__(self):
+
+		self.setup_logging()
 
 		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
 		self.use_era5 = True
@@ -14,6 +16,8 @@ class ECMWF_query:
 		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
 		self.optionals = False  # optional variables to extract depending on ROMS version (Rutgers or Kate)
+		self.ROMS_version = "Kate"  # "Rutgers" the sea-ice component of Kates ROMS version uses downward
+		# shortwave and not net shortwave to account for albedo of ice.
 
 		if not os.path.exists(self.resultsdir):
 			os.mkdir(self.resultsdir)
@@ -27,29 +31,37 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
-		#self.area = "60/0/59/1"  # test setup North/West/South/East
-		self.area = "90/-180/44/180"
+		self.area = "60/0/59/1"  # test setup North/West/South/East
+		# self.area = "90/-180/44/180"
+		# https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+		self.parameters = [#'10m_u_component_of_wind',
+						   #'10m_v_component_of_wind',
+						   #'2m_temperature',
+						   #'mean_sea_level_pressure',
+						   'mean_surface_downward_long_wave_radiation_flux'] #,
+						   #'total_cloud_cover',
+						   #'total_precipitation',
+						   #'specific_humidity']
+		if self.ROMS_version == "Kate":
+			self.parameters.append('mean_surface_downward_short_wave_radiation_flux')
+		elif self.ROMS_version == "Rutgers":
+			self.parameters.append('mean_surface_net_short_wave_radiation_flux')
+		else:
+			raise Exception("[ECMWF_query] You have to specify ROMS version (Kate or Rutgers)")
 
-		self.parameters = ['10m_u_component_of_wind',
-						   '10m_v_component_of_wind',
-						   '2m_temperature',
-						   'mean_sea_level_pressure',
-						   'mean_surface_downward_long_wave_radiation_flux',
-						   'mean_surface_downward_short_wave_radiation_flux',
-						   'total_cloud_cover',
-						   'total_precipitation',
-						   'specific_humidity']
-
+		# Additional variables that can be downloaded if needed
 		if self.optionals:
-			self.parameters.append('evaporation',
-								   'mean_surface_downward_short_wave_radiation_flux',
-								   'mean_surface_net_short_wave_radiation_flux'
-								   'mean_surface_sensible_heat_flux',
-								   'mean_surface_latent_heat_flux',
-								   'mean_surface_net_long_wave_radiation_flux',)
+			self.parameters.append(['evaporation',
+									'mean_surface_sensible_heat_flux',
+									'mean_surface_latent_heat_flux',
+									'mean_surface_net_long_wave_radiation_flux'])
+
+	def setup_logging(self):
+		logger = logging.getLogger()
+		logger.setLevel(logging.DEBUG)
 
 	def info(self):
-		pprint("ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \
+		logging.info("[ECMWF_query] ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \
 		Period: 1979 - present \n \
 		More info on ERA5 can be found here:\n \
 		https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels-monthly-means?tab=overview")
@@ -111,7 +123,8 @@ class ECMWF_query:
 															   'short_name': 'msnswrf',
 															   'roms_name': 'swrad',
 															   'name': 'Mean surface net short-wave radiation flux',
-															   'units': 'W m-2'},
+															   'units': 'W m-2',
+															   'time_name': 'swrad_time'},
 				'mean_surface_net_long_wave_radiation_flux': {'parameter_id': '38.235',
 															  'short_name': 'msnlwrf',
 															  'roms_name': 'lwrad',

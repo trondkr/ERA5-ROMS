@@ -38,10 +38,9 @@ class TestInit(TestECMWF_init):
 		self.assertIsNotNone(self.tool.config_ecmwf.start_year)
 		self.assertIsNotNone(self.tool.config_ecmwf.end_year)
 
-	def test_inital_start_and_end_dates_correct_format(self):
+	def test_initial_start_and_end_dates_correct_format(self):
 		self.assertTrue(datetime.strptime(str(self.tool.config_ecmwf.start_year), '%Y'))
 		self.assertTrue(datetime.strptime(str(self.tool.config_ecmwf.end_year), '%Y'))
-
 
 	def test_initial_variable_and_table_ids_equal_length(self):
 		self.assertTrue(self.tool.config_ecmwf.reanalysis)
