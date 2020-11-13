@@ -31,17 +31,18 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
-		self.area = "60/0/59/1"  # test setup North/West/South/East
+		self.area = "63/0/57/9"  # test setup North/West/South/East
+
 		# self.area = "90/-180/44/180"
 		# https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
-		self.parameters = [#'10m_u_component_of_wind',
-						   #'10m_v_component_of_wind',
-						   #'2m_temperature',
-						   #'mean_sea_level_pressure',
+		self.parameters = ['10m_u_component_of_wind',
+						   '10m_v_component_of_wind',
+						   '2m_temperature',
+						   'mean_sea_level_pressure',
 						   'mean_surface_downward_long_wave_radiation_flux'] #,
-						   #'total_cloud_cover',
-						   #'total_precipitation',
-						   #'specific_humidity']
+						   'total_cloud_cover',
+						   'total_precipitation',
+						   'specific_humidity']
 		if self.ROMS_version == "Kate":
 			self.parameters.append('mean_surface_downward_short_wave_radiation_flux')
 		elif self.ROMS_version == "Rutgers":

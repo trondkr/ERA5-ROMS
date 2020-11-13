@@ -44,8 +44,8 @@ class ECMWF_convert_to_ROMS:
 			units = 'kg m-2 s-1'
 			logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
 		elif parameter in ['mean_sea_level_pressure']:
-			masked_array = np.ma.divide(masked_array, 100) #(1 mb = 100 Pa)
-			units = 'mb'
+		#	masked_array = np.ma.divide(masked_array, 100) #(1 mb = 100 Pa)
+			units = 'Pa'
 			logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
 		elif parameter in ['total_cloud_cover']:
 			dset.renameVariable(metadata['short_name'], 'cloud')
