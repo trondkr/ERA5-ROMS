@@ -39,7 +39,7 @@ class ECMWF_query:
 						   '10m_v_component_of_wind',
 						   '2m_temperature',
 						   'mean_sea_level_pressure',
-						   'mean_surface_downward_long_wave_radiation_flux'] #,
+						   'mean_surface_downward_long_wave_radiation_flux',
 						   'total_cloud_cover',
 						   'total_precipitation',
 						   'specific_humidity']
