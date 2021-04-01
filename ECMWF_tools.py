@@ -3,6 +3,14 @@ import cdsapi
 import ECMWF_query
 import ECMWF_convert_to_ROMS
 
+# **API UUID and key**
+# Before you run this toolbox make sure that you have correctly setup your $HOME/.cdsapirc file.
+#
+# url: https://cds.climate.copernicus.eu/api/v2
+# key: 23112:f85a8914-6595-422d-af2a-de274kj38d2b
+#
+# Login to your account here to get these : https://cds.climate.copernicus.eu
+
 class ECMWF_tools:
 
 	def __init__(self):
@@ -14,7 +22,8 @@ class ECMWF_tools:
 		self.server = cdsapi.Client(debug=self.config_ecmwf.debug)
 
 	def create_requests(self):
-		years = [self.config_ecmwf.start_year + y for y in range(self.config_ecmwf.end_year-self.config_ecmwf.start_year)]
+		years = [self.config_ecmwf.start_year + y for y in
+				 range(self.config_ecmwf.end_year - self.config_ecmwf.start_year)]
 
 		if not os.path.exists(self.config_ecmwf.resultsdir):
 			os.mkdir(self.config_ecmwf.resultsdir)
@@ -27,9 +36,9 @@ class ECMWF_tools:
 				metadata = self.config_ecmwf.get_parameter_metadata(parameter)
 
 				out_filename = "{}{}_{}_year_{}.nc".format(self.config_ecmwf.resultsdir,
-															   self.config_ecmwf.dataset,
-															   metadata["short_name"],
-															   year)
+														   self.config_ecmwf.dataset,
+														   metadata["short_name"],
+														   year)
 				if os.path.exists(out_filename):
 					os.remove(out_filename)
 
@@ -39,7 +48,7 @@ class ECMWF_tools:
 
 		options = {
 			'product_type': 'reanalysis',
-			"year": year,
+			"year": str(year),
 			"month": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 			'day': [
 				'01', '02', '03',
@@ -76,7 +85,7 @@ class ECMWF_tools:
 			options["pressure_level"] = '1000'
 		else:
 			self.config_ecmwf.reanalysis = 'reanalysis-era5-single-levels'
-
+		print(options)
 		try:
 			# Do the request
 			self.server.retrieve(self.config_ecmwf.reanalysis, options, out_filename)

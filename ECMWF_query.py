@@ -16,7 +16,7 @@ class ECMWF_query:
 		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
 		self.optionals = False  # optional variables to extract depending on ROMS version (Rutgers or Kate)
-		self.ROMS_version = "Kate"  # "Rutgers" the sea-ice component of Kates ROMS version uses downward
+		self.ROMS_version = "Rutgers"  # "Rutgers" the sea-ice component of Kates ROMS version uses downward
 		# shortwave and not net shortwave to account for albedo of ice.
 
 		if not os.path.exists(self.resultsdir):
@@ -31,7 +31,7 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
-		self.area = "63/0/57/9"  # test setup North/West/South/East
+		self.area = "61/10/57/6"  # test setup North/West/South/East
 
 		# self.area = "90/-180/44/180"
 		# https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
