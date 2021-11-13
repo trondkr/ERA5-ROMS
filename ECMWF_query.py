@@ -1,15 +1,14 @@
 import os
 import logging
 
-
 class ECMWF_query:
 
 	def __init__(self):
 		self.setup_logging()
 
 		self.use_era5 = True
-		self.start_year = 1980
-		self.end_year = 1981
+		self.start_year = 2007
+		self.end_year = 2020
 		self.project = "ROHO800"
 		self.resultsdir = "../oceanography/ERA5/{}/".format(self.project)
 		self.debug = False
@@ -55,7 +54,8 @@ class ECMWF_query:
 									'mean_surface_sensible_heat_flux',
 									'mean_surface_latent_heat_flux',
 									'mean_surface_net_long_wave_radiation_flux'])
-
+		if not os.path.exists(self.resultsdir):
+			os.makedirs(self.resultsdir, exist_ok = True)
 	def setup_logging(self):
 		logger = logging.getLogger()
 		logger.setLevel(logging.DEBUG)
