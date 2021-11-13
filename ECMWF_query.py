@@ -18,7 +18,7 @@ class ECMWF_query:
 		# shortwave and not net shortwave to account for albedo of ice.
 
 		if not os.path.exists(self.resultsdir):
-			os.mkdirs(self.resultsdir)
+			os.makedirs(self.resultsdir)
 		if self.use_era5:
 			self.dataset = 'era5'
 			self.dataset_class = 'ea'
