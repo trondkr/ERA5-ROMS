@@ -6,14 +6,13 @@ class ECMWF_query:
 
 	def __init__(self):
 		self.setup_logging()
-		# https://www.ecmwf.int/en/forecasts/access-forecasts/ecmwf-web-api
-        self.use_era5 = True
-        self.start_year = 1980
-        self.end_year = 1981
-        self.project = "ROHO800"
-        self.resultsdir = "../oceanography/ERA5/{}/".format(self.project)
 
-        self.debug = False
+		self.use_era5 = True
+		self.start_year = 1980
+		self.end_year = 1981
+		self.project = "ROHO800"
+		self.resultsdir = "../oceanography/ERA5/{}/".format(self.project)
+		self.debug = False
 		self.time_units = "days since 1948-01-01 00:00:00"
 		self.optionals = False  # optional variables to extract depending on ROMS version (Rutgers or Kate)
 		self.ROMS_version = "Rutgers"  # "Rutgers" the sea-ice component of Kates ROMS version uses downward
