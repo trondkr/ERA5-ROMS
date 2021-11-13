@@ -3,6 +3,8 @@
 ![CodeCov][image-3]
 
 ## Download ERA5 and convert to ROMS format
+**update 12.11.2021**
+Believe that the issue with ROMS reading ERA5 generated files using ERA5-ROMs has been resolved by inverting the latitude (and data array) of ERA5. Apparently ROMS is not able to read the ERA5 in the ECMWF standard way of representing latitude. Please create an issue if this is still a problem!
 
 **update 10.08.2020**
 After conversations with ECMWF support I changed the code to only use ERA5 parameter names and not parameter IDs as these did not
