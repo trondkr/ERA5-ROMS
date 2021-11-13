@@ -166,6 +166,7 @@ class ECMWF_convert_to_ROMS:
 		vnc.coordinates = "lon lat {}".format(metadata['time_name'])
 		vnc.units = var_units
 		vnc.missing_value = fill_val
+        
 		vnc[:, :, :] = data_array[:,::-1,:]
 		logging.info(
 			"[ECMWF_convert_to_ROMS] Finished writing to file {}".format(netcdf_roms_filename))
