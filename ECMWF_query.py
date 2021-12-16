@@ -1,19 +1,24 @@
 import os
 import logging
 
+
 class ECMWF_query:
 
 	def __init__(self):
 		self.setup_logging()
 
 		self.use_era5 = True
-		self.start_year = 2007
+		self.start_year = 1993
 		self.end_year = 2020
-		self.project = "ROHO800"
+		self.project = "A20"
+		self.area = self.get_area_for_project(self.project)
+
 		self.resultsdir = "../oceanography/ERA5/{}/".format(self.project)
-		self.debug = False
+		self.debug = True
+
+		self.extract_data_every_6_hours = True
 		self.time_units = "days since 1948-01-01 00:00:00"
-		self.optionals = False  # optional variables to extract depending on ROMS version (Rutgers or Kate)
+		self.optionals = True  # optional variables to extract depending on ROMS version (Rutgers or Kate)
 		self.ROMS_version = "Rutgers"  # "Rutgers" the sea-ice component of Kates ROMS version uses downward
 		# shortwave and not net shortwave to account for albedo of ice.
 
@@ -29,9 +34,7 @@ class ECMWF_query:
 			self.grid = '0.75/0.75'
 
 		self.reanalysis = 'reanalysis-era5-single-levels'  # 'reanalysis-era5-complete'
-		self.area = "61/10/57/6"  # test setup North/West/South/East
 
-		# self.area = "90/-180/44/180"
 		# https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
 		self.parameters = ['10m_u_component_of_wind',
 						   '10m_v_component_of_wind',
@@ -50,21 +53,28 @@ class ECMWF_query:
 
 		# Additional variables that can be downloaded if needed
 		if self.optionals:
-			self.parameters.append(['evaporation',
+			self.parameters.extend(['evaporation',
 									'mean_surface_sensible_heat_flux',
 									'mean_surface_latent_heat_flux',
 									'mean_surface_net_long_wave_radiation_flux'])
 		if not os.path.exists(self.resultsdir):
-			os.makedirs(self.resultsdir, exist_ok = True)
+			os.makedirs(self.resultsdir, exist_ok=True)
+
+	def get_area_for_project(self, project):
+		# Setup project dependent area to extract
+		# North/West/South/East
+		return {'A20': '62/1/56/10',
+				'ROHO800': '90/-180/40/180'}[project]
+
 	def setup_logging(self):
 		logger = logging.getLogger()
 		logger.setLevel(logging.DEBUG)
 
 	def info(self):
 		logging.info("[ECMWF_query] ERA5: \n Reanalysis: 0.25°x0.25° (atmosphere), 0.5°x0.5° (ocean waves) \n \
-		Period: 1979 - present \n \
-		More info on ERA5 can be found here:\n \
-		https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels-monthly-means?tab=overview")
+			Period: 1979 - present \n \
+			More info on ERA5 can be found here:\n \
+			https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels-monthly-means?tab=overview")
 
 	# List of parameters to download:
 	# https://apps.ecmwf.int/codes/grib/param-db

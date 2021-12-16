@@ -3,6 +3,7 @@ import cdsapi
 import ECMWF_query
 import ECMWF_convert_to_ROMS
 
+
 # **API UUID and key**
 # Before you run this toolbox make sure that you have correctly setup your $HOME/.cdsapirc file.
 #
@@ -42,13 +43,27 @@ class ECMWF_tools:
 				if os.path.exists(out_filename):
 					os.remove(out_filename)
 
-				self.submit_request(parameter, year, out_filename)
+				self.submit_request(parameter, str(year), out_filename)
 
 	def submit_request(self, parameter, year, out_filename):
 
+		times = [
+			'00:00', '01:00', '02:00',
+			'03:00', '04:00', '05:00',
+			'06:00', '07:00', '08:00',
+			'09:00', '10:00', '11:00',
+			'12:00', '13:00', '14:00',
+			'15:00', '16:00', '17:00',
+			'18:00', '19:00', '20:00',
+			'21:00', '22:00', '23:00',
+		]
+
+		if self.config_ecmwf.extract_data_every_6_hours is True:
+			times = ['00:00', '06:00', '12:00', '18:00']
+
 		options = {
 			'product_type': 'reanalysis',
-			"year": str(year),
+			"year": year,
 			"month": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 			'day': [
 				'01', '02', '03',
@@ -63,21 +78,13 @@ class ECMWF_tools:
 				'28', '29', '30',
 				'31',
 			],
-			'time': [
-				'00:00', '01:00', '02:00',
-				'03:00', '04:00', '05:00',
-				'06:00', '07:00', '08:00',
-				'09:00', '10:00', '11:00',
-				'12:00', '13:00', '14:00',
-				'15:00', '16:00', '17:00',
-				'18:00', '19:00', '20:00',
-				'21:00', '22:00', '23:00',
-			],
+			'time': times,
 			"variable": [parameter],
 			'format': "netcdf",
 			"area": self.config_ecmwf.area,
 			"verbose": self.config_ecmwf.debug,
 		}
+
 		# Add more specific options for variables on pressure surfaces
 		if parameter == "specific_humidity":
 			self.config_ecmwf.reanalysis = "reanalysis-era5-pressure-levels"
@@ -85,7 +92,7 @@ class ECMWF_tools:
 			options["pressure_level"] = '1000'
 		else:
 			self.config_ecmwf.reanalysis = 'reanalysis-era5-single-levels'
-		print(options)
+
 		try:
 			# Do the request
 			self.server.retrieve(self.config_ecmwf.reanalysis, options, out_filename)
