@@ -8,15 +8,15 @@ class ECMWF_query:
         self.setup_logging()
 
         self.use_era5 = True
-        self.start_year = 1991
-        self.end_year = 2020
+        self.start_year = 1981
+        self.end_year = 1990
         self.project = "A20"
         self.area = self.get_area_for_project(self.project)
-
+        self.skip_existing_files=True
         self.resultsdir = "../oceanography/ERA5/{}/".format(self.project)
         self.debug = False
 
-        self.extract_data_every_6_hours = True
+        self.extract_data_every_N_hours = True
         self.time_units = "days since 1948-01-01 00:00:00"
         self.optionals = True  # optional variables to extract depending on ROMS version (Rutgers or Kate)
         self.ROMS_version = "Kate"  # "Rutgers" or "Kate" - the sea-ice component of Kates ROMS version uses downward
@@ -44,7 +44,7 @@ class ECMWF_query:
                            'total_cloud_cover',
                            'total_precipitation',
                            'specific_humidity']
-       
+        
         if self.ROMS_version == "Kate":
             self.parameters.append('mean_surface_downward_short_wave_radiation_flux')
         elif self.ROMS_version == "Rutgers":

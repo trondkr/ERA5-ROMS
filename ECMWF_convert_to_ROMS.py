@@ -85,13 +85,13 @@ class ECMWF_convert_to_ROMS:
 
 		dates = num2date(era5_time, units=era5_time_units, calendar=era5_time_cal)
 		logging.debug(
-			"[ECMWF_convert_to_ROMS] Converted time: {} to {}".format(dates[0], dates[-1]))
+			f"[ECMWF_convert_to_ROMS] Converted time: {dates[0]} to {dates[-1]}")
 
 		# Convert back to julian day and convert to days since 1948-01-01 as that is standard for ROMS
 		# days_to_seconds = 86400.0
 		times = netCDF4.date2num(dates, units=config_ecmwf.time_units)  # * days_to_seconds
 		logging.debug(
-			"[ECMWF_convert_to_ROMS] Converted time: {} to {} units: {}".format(times[0], times[-1], config_ecmwf.time_units))
+			f"[ECMWF_convert_to_ROMS] Converted time: {times[0]} to {times[-1]} units: {config_ecmwf.time_units}")
 
 		return times, config_ecmwf.time_units, era5_time_cal
 
@@ -117,8 +117,9 @@ class ECMWF_convert_to_ROMS:
 		latitude = ds.variables['latitude'][:]
 		time, time_units, time_calendar = self.change_reference_date(ds, config_ecmwf)
 
-		netcdf_roms_filename = netcdf_file[0:-3] + '_roms.nc'
-		if os.path.exists(netcdf_roms_filename): os.remove(netcdf_roms_filename)
+        netcdf_roms_filename = f"{out_filename[0:-3]}_roms.nc"
+		if os.path.exists(netcdf_roms_filename): 
+            os.remove(netcdf_roms_filename)
 		logging.info(
 			"[ECMWF_convert_to_ROMS] Writing final product to file {}".format(netcdf_roms_filename))
 
@@ -128,7 +129,7 @@ class ECMWF_convert_to_ROMS:
 						 "Atmospheric data on original grid but converted to ROMS units and parameter names." \
 						 "Files created using the ECMWF_tools toolbox:" \
 						 "https://github.com/trondkr/ERA5-ROMS"
-		f1.history = "Created {}".format(datetime.now())
+		f1.history = f"Created {datetime.now()}"
 		f1.link = "https://github.com/trondkr/"
 		f1.Conventions = "CF-1.0"
 		fill_val = 1.0e35
@@ -163,12 +164,12 @@ class ECMWF_convert_to_ROMS:
 		vnc = f1.createVariable(metadata['roms_name'], 'd', (metadata['time_name'], 'lat', 'lon'), fill_value=fill_val)
 		vnc.long_name = metadata["name"]
 		vnc.standard_name = metadata["short_name"]
-		vnc.coordinates = "lon lat {}".format(metadata['time_name'])
+		vnc.coordinates = f"lon lat {metadata['time_name']}"
 		vnc.units = var_units
 		vnc.missing_value = fill_val
         
 		vnc[:, :, :] = data_array[:,::-1,:]
 		logging.info(
-			"[ECMWF_convert_to_ROMS] Finished writing to file {}".format(netcdf_roms_filename))
+			f"[ECMWF_convert_to_ROMS] Finished writing to file {netcdf_roms_filename}")
 		os.remove(netcdf_file)
 		f1.close()
