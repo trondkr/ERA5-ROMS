@@ -2,7 +2,8 @@ import os
 import cdsapi
 import ECMWF_query
 import ECMWF_convert_to_ROMS
-
+import multiprocessing
+from multiprocessing import Pool, cpu_count
 
 # **API UUID and key**
 # Before you run this toolbox make sure that you have correctly setup your $HOME/.cdsapirc file.
@@ -22,7 +23,8 @@ class ECMWF_tools:
         self.config_ecmwf = ECMWF_query.ECMWF_query()
         self.server = cdsapi.Client(debug=self.config_ecmwf.debug)
 
-    def create_requests(self):
+    def create_requests_as_processes(self):
+        processes = []
         years = [
             self.config_ecmwf.start_year + y
             for y in range(self.config_ecmwf.end_year - self.config_ecmwf.start_year)
@@ -48,12 +50,13 @@ class ECMWF_tools:
                 if os.path.exists(roms_outfile):
                     if not self.config_ecmwf.skip_existing_files:
                         os.remove(out_filename)
-                        self.submit_request(parameter, str(year), out_filename)
+                        processes.append(multiprocessing.Process(target=self.submit_request, args=(parameter, str(year), out_filename)))
                     else:
                         print(f"Skipping existing file: {out_filename}")
                 else:
-                    self.submit_request(parameter, str(year), out_filename)
-                    
+                    processes.append(multiprocessing.Process(target=self.submit_request, args=(parameter, str(year), out_filename)))
+        return processes
+
     def submit_request(self, parameter, year, out_filename):
 
         times = [
@@ -183,4 +186,7 @@ class ECMWF_tools:
 
 if __name__ == "__main__":
     tool = ECMWF_tools()
-    tool.create_requests()
+    requests = tool.create_requests_as_processes()
+
+    pool = multiprocessing.Pool(processes=4)
+    pool.map(requests)

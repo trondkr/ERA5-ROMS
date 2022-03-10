@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SshConfigs">
-    <configs>
-      <sshConfig authType="PASSWORD" connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="fram.sigma2.no" id="162c9c08-acc8-4fb3-83be-21c32e47fc5f" port="22" nameFormat="DESCRIPTIVE" username="trondk" />
-    </configs>
-  </component>
-</project>
