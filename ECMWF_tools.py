@@ -3,7 +3,7 @@ import cdsapi
 import ECMWF_query
 import ECMWF_convert_to_ROMS
 import multiprocessing
-from multiprocessing import Pool, cpu_count
+from tqdm import tqdm
 
 # **API UUID and key**
 # Before you run this toolbox make sure that you have correctly setup your $HOME/.cdsapirc file.
@@ -57,8 +57,9 @@ class ECMWF_tools:
                     processes.append((parameter, str(year), out_filename))
         return processes
 
-    def submit_request(self, parameter, year, out_filename):
-        print("submit_request=",parameter,year, out_filename)
+    def submit_request(self, req):
+        parameter, year, out_filename = req
+        print("Running  submit_request=",parameter,year, out_filename)
         times = [
             "00:00",
             "01:00",
@@ -188,5 +189,16 @@ if __name__ == "__main__":
     tool = ECMWF_tools()
     requests = tool.create_requests_as_processes()
 
-    pool = multiprocessing.Pool(processes=4)
-    pool.map(tool.submit_request, requests)
+    pbar = tqdm(total=len(requests))
+
+    def update(*a):
+        pbar.update()
+
+
+    results = []
+    with multiprocessing.Pool(4) as pool:
+        for key, value in requests.items():
+            pool.apply_async(tool.submit_request, (requests,), callback=update)
+
+        pool.close()
+        pool.join()
