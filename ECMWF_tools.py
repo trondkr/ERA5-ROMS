@@ -50,15 +50,15 @@ class ECMWF_tools:
                 if os.path.exists(roms_outfile):
                     if not self.config_ecmwf.skip_existing_files:
                         os.remove(out_filename)
-                        processes.append(multiprocessing.Process(target=self.submit_request, args=(parameter, str(year), out_filename)))
+                        processes.append((parameter, str(year), out_filename))
                     else:
                         print(f"Skipping existing file: {out_filename}")
                 else:
-                    processes.append(multiprocessing.Process(target=self.submit_request, args=(parameter, str(year), out_filename)))
+                    processes.append((parameter, str(year), out_filename))
         return processes
 
     def submit_request(self, parameter, year, out_filename):
-
+        print("submit_request=",parameter,year, out_filename)
         times = [
             "00:00",
             "01:00",
@@ -189,4 +189,4 @@ if __name__ == "__main__":
     requests = tool.create_requests_as_processes()
 
     pool = multiprocessing.Pool(processes=4)
-    pool.map(requests)
+    pool.map(tool.submit_request, requests)
