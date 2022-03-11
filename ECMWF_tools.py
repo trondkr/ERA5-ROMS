@@ -194,11 +194,7 @@ if __name__ == "__main__":
     def update(*a):
         pbar.update()
 
-
-    results = []
-    with multiprocessing.Pool(4) as pool:
-        for key, value in requests.items():
-            pool.apply_async(tool.submit_request, (requests,), callback=update)
-
-        pool.close()
-        pool.join()
+    pool = multiprocessing.Pool(processes=4)
+    pool.map(tool.submit_request, requests)
+    pool.close()
+    pool.join()
