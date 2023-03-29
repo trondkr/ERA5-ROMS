@@ -157,7 +157,7 @@ class ECMWF_tools:
             "variable": [parameter],
             "format": "netcdf",
             "area": self.config_ecmwf.area,
-            "verbose": self.config_ecmwf.debug,
+#            "verbose": self.config_ecmwf.debug,
         }
 
         # Add more specific options for variables on pressure surfaces
