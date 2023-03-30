@@ -15,8 +15,15 @@ class ECMWF_convert_to_ROMS:
 
     def convert_to_ROMS_units_standards(self, out_filename: str, metadata, parameter: str, config_ecmwf: ECMWF_query):
         dset = netCDF4.Dataset(out_filename, 'r+')
-
-        da = dset.variables[metadata['short_name']][:]
+        
+        # ERA5 CDS requests can return a mixture of ERA5 and ERA5T data
+        # in this case there is an extra dimension and we need to reduce that dimension
+        # https://confluence.ecmwf.int/pages/viewpage.action?pageId=173385064
+        if 'expver' in dset.variables.keys():
+            dimid = dset.variables[metadata['short_name']].dimensions.index("expver")
+            da = np.mean(dset.variables[metadata['short_name']][:],axis=dimid)
+        else:
+            da = dset.variables[metadata['short_name']][:]
         masked_array = np.ma.masked_where(da == dset.variables[metadata['short_name']].missing_value, da)
         logging.debug("[ECMWF_convert_to_ROMS] Will convert for parameter: {}".format(parameter))
         if parameter in ['mean_surface_net_short_wave_radiation_flux',
@@ -124,9 +131,12 @@ class ECMWF_convert_to_ROMS:
 
         f1 = netCDF4.Dataset(netcdf_roms_filename, 'w')
         f1.title = "{} ECMWF model forcing for parameter {}".format(config_ecmwf.dataset.upper(), parameter)
+        note = ""
+        if 'expver' in ds.variables.keys():
+            note = "Note: Includes ERA5T (near real time) preliminary data. "
         f1.description = "Created by Trond Kristiansen (at) niva.no." \
                          "Atmospheric data on original grid but converted to ROMS units and parameter names." \
-                         "Files created using the ECMWF_tools toolbox:" \
+                         f"{note}Files created using the ECMWF_tools toolbox:" \
                          "https://github.com/trondkr/ERA5-ROMS"
         f1.history = f"Created {datetime.now()}"
         f1.link = "https://github.com/trondkr/"
