@@ -13,6 +13,19 @@ class ECMWF_convert_to_ROMS:
     def __init__(self):
         self.plotter = ECMWF_plot.ECMWF_plot()
 
+    def irradiance_variables(self):
+        """
+        Return True or False if parameter is an irradiance variable which produces
+        time-integrated values
+        :return: True or False
+        """
+        return ['mean_surface_net_short_wave_radiation_flux',
+                         'mean_surface_net_long_wave_radiation_flux',
+                         'mean_surface_downward_long_wave_radiation_flux',
+                         'mean_surface_latent_heat_flux',
+                         'mean_surface_sensible_heat_flux',
+                         'mean_surface_downward_short_wave_radiation_flux']
+
     def convert_to_ROMS_units_standards(self, out_filename: str, metadata, parameter: str, config_ecmwf: ECMWF_query):
         dset = netCDF4.Dataset(out_filename, 'r+')
         
@@ -26,48 +39,42 @@ class ECMWF_convert_to_ROMS:
             da = dset.variables[metadata['short_name']][:]
         masked_array = np.ma.masked_where(da == dset.variables[metadata['short_name']].missing_value, da)
         logging.debug("[ECMWF_convert_to_ROMS] Will convert for parameter: {}".format(parameter))
-        if parameter in ['mean_surface_net_short_wave_radiation_flux',
-                         'mean_surface_net_long_wave_radiation_flux',
-                         'mean_surface_downward_long_wave_radiation_flux',
-                         'mean_surface_latent_heat_flux',
-                         'mean_surface_sensible_heat_flux',
-                         'mean_surface_downward_short_wave_radiation_flux']:
+        if parameter in self.irradiance_variables():
             # masked_array = np.ma.divide(masked_array, (3600. * 3.0))
             units = 'W m**-2'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['specific_humidity']:
             units = 'kg kg-1'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['10m_u_component_of_wind', '10m_v_component_of_wind']:
             units = 'm s-1'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['2m_temperature', '2m_dewpoint_temperature']:
             masked_array = np.ma.subtract(masked_array, 273.15)
             units = 'Celsius'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['evaporation']:
             Rho_w = 1000.  # kg m - 3
             masked_array = np.ma.multiply(masked_array, (Rho_w / (1 * 3600.)))
             units = 'kg m-2 s-1'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['mean_sea_level_pressure']:
         #	masked_array = np.ma.divide(masked_array, 100) #(1 mb = 100 Pa)
             units = 'Pa'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['total_cloud_cover']:
             dset.renameVariable(metadata['short_name'], 'cloud')
             units = 'nondimensional'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         elif parameter in ['total_precipitation']:
             # Convert meter (m) to rate (kgm-2s-1)
             Rho_w = 1000  # kg m - 3
             masked_array = np.ma.multiply(masked_array, (Rho_w / (1 * 3600.)))
             units = 'kg m-2 s-1'
-            logging.debug("[ECMWF_convert_to_ROMS] Converted parameter: {}".format(parameter))
+            logging.debug(f"[ECMWF_convert_to_ROMS] Converted parameter: {parameter}")
         else:
-            raise Exception("[ECMWF_convert_to_ROMS] Unable to find parameter {} to convert to ROMS format".format(parameter))
-        # longitude = dset.variables['longitude'][:]
-        # latitude = dset.variables['latitude'][:]
+            raise Exception(f"[ECMWF_convert_to_ROMS] Unable to find parameter {parameter} to convert to ROMS format")
+
 
         # do_plot = False
         # if do_plot:
@@ -81,14 +88,36 @@ class ECMWF_convert_to_ROMS:
                                        dset)
         dset.close()
 
+    def adjust_time_for_integrated_variables(self, era5_time, parameter: str):
+        """
+        This method is used to adjust ERA5 irradiance and precipitation data.
+        For these variables, the timestamps are located at the ends of the 1-hour averaging periods, see
+        https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+
+        This is not what we want for forcing a ROMS simulation.  If using estimates of hourly-average
+        irradiance, the timestamps should be located in the centres of the averaging intervals.
+        This means that the time variables for all such ERA5 forcing files need to be pushed back by
+        half an hour, e.g.:
+        :param era5_time: timeseries of timestamps to be adjusted
+        :param parameter: variable
+        :return: adjusted timeseries
+        """
+
+        if parameter in self.irradiance_variables() or parameter in ["total_precipitation"]:
+            era5_time = era5_time - 0.5
+            print(era5_time)
+        return era5_time
+
     # We change the reference date to be equal to the standard ROMS
     # reference time 1948-01-01 so that we can optionally use ocean_time as time name
-    def change_reference_date(self, ds, config_ecmwf: ECMWF_query):
-
+    def change_reference_date(self, ds, config_ecmwf: ECMWF_query, parameter: str):
         era5_time = ds.variables['time'][:]
+        era5_time = self.adjust_time_for_integrated_variables(era5_time, parameter)
+
         era5_time_units = ds.variables['time'].units
         era5_time_cal = ds.variables['time'].calendar
-        logging.debug("[ECMWF_convert_to_ROMS] Original time: {} to {} cal: {} units: {}".format(era5_time[0],era5_time[-1], era5_time_cal, era5_time_units))
+        logging.debug(
+            f"[ECMWF_convert_to_ROMS] Original time: {era5_time[0]} to {era5_time[-1]} cal: {era5_time_cal} units: {era5_time_units}")
 
         dates = num2date(era5_time, units=era5_time_units, calendar=era5_time_cal)
         logging.debug(
@@ -122,7 +151,7 @@ class ECMWF_convert_to_ROMS:
 
         longitude = ds.variables['longitude'][:]
         latitude = ds.variables['latitude'][:]
-        time, time_units, time_calendar = self.change_reference_date(ds, config_ecmwf)
+        time, time_units, time_calendar = self.change_reference_date(ds, config_ecmwf, parameter)
         netcdf_roms_filename = f"{netcdf_file[0:-3]}_roms.nc"
         if os.path.exists(netcdf_roms_filename): 
             os.remove(netcdf_roms_filename)
@@ -134,7 +163,7 @@ class ECMWF_convert_to_ROMS:
         note = ""
         if 'expver' in ds.variables.keys():
             note = "Note: Includes ERA5T (near real time) preliminary data. "
-        f1.description = "Created by Trond Kristiansen (at) niva.no." \
+        f1.description = "Created by Trond Kristiansen (trondkr (at) FarallonInstitute.org)." \
                          "Atmospheric data on original grid but converted to ROMS units and parameter names." \
                          f"{note}Files created using the ECMWF_tools toolbox:" \
                          "https://github.com/trondkr/ERA5-ROMS"
@@ -159,7 +188,7 @@ class ECMWF_convert_to_ROMS:
         vnc.long_name = 'Latitude'
         vnc.units = 'degree_north'
         vnc.standard_name = 'latitude'
-        # For latitude we need to reverse the order provided by ECMWF.
+        # For latitude, we need to reverse the order provided by ECMWF.
         # The same goes with the data
         vnc[:] = latitude[::-1] 
 
